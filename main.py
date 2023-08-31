@@ -2,11 +2,12 @@ import discord
 from discord.ext import commands
 import logging
 import asyncio
+from bot_token import BAYESIAN_BOT_TOKEN
 
 # Configure logging to display debug messages
 logging.basicConfig(level=logging.DEBUG)
 
-token = 'MTE0NjA3MzkzNzYyOTk0NTg4Ng.GJTZhx.ePcD5sIqKKT0i4-FAvCbO2NhsxfH-kH2o682fc'
+token = BAYESIAN_BOT_TOKEN
 
 REACT_EMOJIS = ["🌕", "🌖", "🌗", "🌘", "🌑", "🌒", "🌓", "🌔", "🌝"]
 MAX_STARS = 15

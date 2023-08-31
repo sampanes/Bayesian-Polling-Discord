@@ -1,0 +1,5 @@
+#ignore secret bot token file which is python why not
+bot_token.py
+
+#ignore virtual environment
+venv/
