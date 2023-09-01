@@ -3,3 +3,6 @@ bot_token.py
 
 #ignore virtual environment
 venv/
+
+#pycache wasting my time
+__pycache__/

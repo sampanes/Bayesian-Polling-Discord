@@ -3,17 +3,14 @@ from discord.ext import commands
 import logging
 import asyncio
 from bot_token import BAYESIAN_BOT_TOKEN
+from bot_globals import *
+from process_input import poll_input_to_string
+from process_output import get_result_text
 
 # Configure logging to display debug messages
 logging.basicConfig(level=logging.DEBUG)
 
 token = BAYESIAN_BOT_TOKEN
-
-REACT_EMOJIS = ["🌕", "🌖", "🌗", "🌘", "🌑", "🌒", "🌓", "🌔", "🌝"]
-MAX_STARS = 15
-MINUTES = 60 * 1
-HOURS = 60 * MINUTES
-DEFAULT_TIMEOUT_TIME = 24 * HOURS
 
 intents = discord.Intents.default()
 intents.typing = False
@@ -22,58 +19,6 @@ intents.presences = True  # Add this line for Presence Intent
 intents.members = True  # Add this line for Server Members Intent
 
 bot = commands.Bot(command_prefix='!', intents=intents)
-
-def is_float(num):
-    try:
-        float(num)
-        return True
-    except ValueError:
-        return False
-
-def poll_input_to_string(options):
-    if len(options) == 3:
-        ret_timeout = DEFAULT_TIMEOUT_TIME
-    elif len(options) == 4 and is_float(options[3]):
-        ret_timeout = float(options[3])
-    elif len(options) == 4 and options[3].lower() == "none":
-        ret_timeout = None
-    else:
-        poll_message = f"**Poll:** did you format this correctly?\n{' | '.join(options)}\n"
-        return poll_message, "question", "No", "Yes", DEFAULT_TIMEOUT_TIME/2
-    
-    # Create poll message
-    o1 = "🌕: {}".format(options[1])
-    o2 = "🌝: {}".format(options[2])
-    poll_message = f"**Poll:** {options[0]}\n\n{o1}\n{o2}"
-    return poll_message, options[0], options[1], options[2], ret_timeout
-
-def get_result_text(server_members_react_dict, o1, o2):
-    # Process the poll results
-    result_text = f"Poll Results:\n"
-    # Create a dictionary to store reaction counts
-    reaction_counts_dict = {emoji: 0 for emoji in REACT_EMOJIS}
-
-    percent_dict = {emoji: 0.0 for emoji in REACT_EMOJIS}
-    for step in range(len(REACT_EMOJIS)):
-        percent_dict[REACT_EMOJIS[step]] = (100.0 / (float(len(REACT_EMOJIS)-1)) * step)
-
-    total_voters = 0
-    max_count = 0
-    for user_key, reaction_value in server_members_react_dict.items():
-        reaction_counts_dict[reaction_value.emoji] += 1
-        max_count = max(max_count, reaction_counts_dict[reaction_value.emoji])
-        total_voters+=1
-    total_percent = 0
-    star_per_count = float(MAX_STARS) / float(max_count)
-    for emoji_key, percent_value in percent_dict.items():
-        total_percent+=percent_value * reaction_counts_dict[emoji_key]
-        result_text+=f"`{'~{:6.2f}:'.format(percent_value)}"
-        result_text+="#"*(int(star_per_count * reaction_counts_dict[emoji_key]))+"`\n"
-    final_p = total_percent/total_voters
-    result_text+=f"{'{:6.2f}%'.format(final_p if final_p > 50 else 100 - final_p)}"
-    result_text+=" so a dead tie" if final_p == 50.0 else (f" favorability for \"{o2 if final_p > 50.0 else o1}\"")
-    return result_text
-
 
 @bot.command()
 async def ping(ctx):
