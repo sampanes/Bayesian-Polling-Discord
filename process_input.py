@@ -21,6 +21,7 @@ def is_a_time(num):
     except ValueError:
         return False
 
+def get_ret_timeout(option3):
     time_char = ""
     for char_key, list_value in DAY_HOUR_MINUTE.items():
         for substring in list_value:
