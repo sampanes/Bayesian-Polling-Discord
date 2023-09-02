@@ -44,7 +44,8 @@ async def custom_help(ctx):
 
 @bot.command()
 async def ping(ctx):
-    await ctx.send("Pong!")
+    latency = round(bot.latency * 1000)  # Convert to milliseconds and round
+    await ctx.send(f"Pong! Latency is {latency}ms")
 
 @bot.command(name="pollchannel", aliases=["postpoll", "post-poll", "postpolls", "post-polls", "pollschannel", "poll-channel", "polls-channel", "channelpoll", "channelpolls"])
 async def pollchannel(ctx, channel: discord.TextChannel):
