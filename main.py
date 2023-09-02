@@ -12,6 +12,7 @@ from process_input import (
     configure_channel
 )
 from process_output import get_result_text
+from custom_getters import get_channel_or_default
 
 # Configure logging to display debug messages
 logging.basicConfig(level=logging.DEBUG)
@@ -28,17 +29,16 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 
 bot.remove_command('help')
 @bot.command(name="bot-help", aliases=["poll-help", "help-poll", "help-bot", "help"])
-async def custom_help(ctx):
-    help_message = "Hey there! This is a bot by John and here are a few things I can do for you:\n\n"
-    
+async def custom_help(ctx):    
     commands = COMMANDS_AND_DESCRIPTIONS
 
+    help_embed = discord.Embed(title="Bayesian Polling Bot Help", description=f"Hey there! This is a bot by John and here are a few things I can do for you:", color=0x3498db)
+
     for command, description in commands:
-        help_message += f"**{command}**: {description}\n\n"
+        help_embed.add_field(name=f"**{command}**", value=f"{description}\n", inline=False)
     
-    help_embed = discord.Embed(title="Bayesian Polling Bot Help", description=help_message, color=0x3498db)
-    help_embed.set_author(name="Bot Commands", icon_url=bot.user.avatar.url)
-    help_embed.set_footer(text="_Feel free to ping John for help anytime!_")
+    help_embed.set_author(name=f"Hey {ctx.author}", icon_url=bot.user.avatar.url)
+    help_embed.set_footer(text="Feel free to ping John for help anytime!")
 
     await ctx.send(embed=help_embed)
 
@@ -63,7 +63,7 @@ async def resultschannel(ctx, channel: discord.TextChannel):
     print("User entered Results channel:\n",SERVER_SETTINGS)
     await ctx.send(ret_message)
 
-@bot.command()
+@bot.command(name="poll", aliases=["pol", "makepoll", "polls", "ask"])
 async def poll(ctx, *options):
     SERVER_SETTINGS = get_server_settings_pkl()
     server_id = ctx.guild.id
@@ -77,14 +77,9 @@ async def poll(ctx, *options):
         poll_embed, question, o1, o2, timeout_time = poll_input_to_string(options, ctx.author)
 
         # Get Poll Channel
-        poll_channel_id = SERVER_SETTINGS[server_id]['post_poll_channel']
-        poll_channel = bot.get_channel(poll_channel_id)
-        if not poll_channel:
-            poll_channel = ctx
-            await poll_channel.send("The configured poll channel doesn't exist. posting poll here")
-        elif not poll_channel.permissions_for(poll_channel.guild.me).send_messages:
-            await ctx.send(f"I guess this bot cannnot post in {poll_channel.mention}")
-            poll_channel = ctx
+        poll_channel, pc_message = get_channel_or_default(SERVER_SETTINGS, bot, ctx, 'post_poll_channel')
+        if pc_message:
+            await poll_channel.send(pc_message)
 
         # Poll channel members
                 # Get the list of all users in the server
@@ -95,16 +90,10 @@ async def poll(ctx, *options):
             if permissions.view_channel:
                 poll_channel_members.append(member)
         
-
         # Get Results Channel
-        results_channel_id = SERVER_SETTINGS[server_id]['post_results_channel']
-        results_channel = bot.get_channel(results_channel_id)
-        if not results_channel:
-            results_channel = ctx
-            await results_channel.send("The configured result channel doesn't exist. posting poll results here")
-        elif not results_channel.permissions_for(results_channel.guild.me).send_messages:
-            await ctx.send(f"I guess this bot cannnot post in {results_channel.mention}")
-            results_channel = poll_channel
+        results_channel, rc_message = get_channel_or_default(SERVER_SETTINGS, bot, poll_channel, 'post_results_channel')
+        if rc_message:
+            await poll_channel.send(rc_message)
         
         # Post the poll, keep poll_msg variable to keep interacting with it
         poll_msg = await poll_channel.send(embed=poll_embed)
@@ -134,6 +123,7 @@ async def poll(ctx, *options):
             #await poll_channel.send(f"`{o1}`\nor\n`{o2}`?\nVoting Closed, check {results_channel.mention} for results")
             pass #TODO what to do after timeout
 
+        # edit poll message footer to display that the voting has ended
         if poll_msg.embeds:
             embed = poll_msg.embeds[0]
             if embed.footer:
@@ -149,7 +139,7 @@ async def poll(ctx, *options):
         print(f"server settings dict {SERVER_SETTINGS}")
         await ctx.send("No poll or result channel has been configured for this server.\n!pollchannel #channel and !resultchannel #channel")
         return
-
+    
 
 # Run the bot with your token
 bot.run(token)

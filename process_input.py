@@ -51,8 +51,42 @@ def get_ret_timeout(option3):
             actual_time = raw_time
         ret_timeout = actual_time
     else:
-        ret_timeout 
+        ret_timeout = DEFAULT_TIMEOUT_TIME
     return ret_timeout
+
+####
+#   Only used locally
+####
+def format_timeout(ret_timeout):
+    ret_timeout = int(ret_timeout)
+    # Calculate days, hours, minutes, and seconds
+    days, remainder = divmod(ret_timeout, 86400)
+    hours, remainder = divmod(remainder, 3600)
+    minutes, seconds = divmod(remainder, 60)
+
+    # Create a list to hold the time components
+    time_components = []
+
+    # Add days to the list if it's greater than zero
+    if days > 0:
+        time_components.append(f"{days} day{'s' if days > 1 else ''}")
+
+    # Add hours, minutes, and seconds to the list if they are greater than zero
+    if hours > 0:
+        time_components.append(f"{hours} hour{'s' if hours > 1 else ''}")
+    if minutes > 0:
+        time_components.append(f"{minutes} minute{'s' if minutes > 1 else ''}")
+    if seconds > 0:
+        time_components.append(f"{seconds} second{'s' if seconds > 1 else ''}")
+
+    # Join the time components into a single string
+    prefixes = ["", " and ", ", ", ", ", ", ", ", ", ", "]
+    formatted_time = ""
+    for ii in range(len(time_components)):
+        formatted_time = time_components[ii] + prefixes[ii] + formatted_time
+    # formatted_time = ' '.join(time_components)
+
+    return formatted_time
 
 '''
 
@@ -95,7 +129,7 @@ def poll_input_to_string(options, author):
     poll_message.add_field(name="🌝", value=options[2], inline=True)
     
     poll_message.set_author(name=f"{author} asks...")
-    poll_message.set_footer(text="Please vote using the emojis below!")
+    poll_message.set_footer(text=f"Vote now! This poll is open for {format_timeout(ret_timeout)}")
 
     print("returning a timeout of: ",ret_timeout," which is in seconds")
     return poll_message, options[0], options[1], options[2], ret_timeout
@@ -138,7 +172,13 @@ def configure_channel(ctx, post_channel, channel):
                 post_channel: channel.id
             }
         pickle.dump(SERVER_SETTINGS, open("server_settings.pickle", "wb"))
-        ret_message = f"Polls will now be posted in {channel.mention}"
+        if 'poll' in post_channel:
+            stuff = "Polls"
+        elif 'result' in post_channel:
+            stuff = "Results"
+        else:
+            stuff = "WHAT IS THIS SHIT"
+        ret_message = f"{stuff} will now be posted in {channel.mention}"
     else:
         ret_message = f"You don't have permission to configure settings."
     return ret_message
