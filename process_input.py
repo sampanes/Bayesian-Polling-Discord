@@ -2,6 +2,10 @@ import pickle
 import discord
 from bot_globals import *
 
+def printy(*str):
+    print(*str)
+    pass
+
 ####
 #   Only used locally
 ####
@@ -28,17 +32,31 @@ def is_a_time(num):
         return True
     except ValueError:
         return False
+    
+####
+#   Only used locally
+####
+def just_chars(string):
+    ret_str = ""
+    for character in string:
+        if ord(character.lower()) >= ord('a') and ord(character.lower()) <= ord('z'):
+            ret_str += character.lower()
+    return ret_str
 
 ####
 #   Only used locally
 ####
 def get_ret_timeout(option3):
     time_char = ""
+    extracted_string = just_chars(option3)
     for char_key, list_value in DAY_HOUR_MINUTE.items():
         for substring in list_value:
-            if substring.lower() in option3.lower():
+            if substring.lower() == extracted_string:
                 time_char = char_key
                 break
+        if time_char:
+            break
+            
     if time_char:
         raw_time = float(extract_numbers(option3))
         if time_char == "d":
@@ -116,7 +134,7 @@ def poll_input_to_string(options, author):
     elif len(options) == 4 and options[3].lower() == "none":
         ret_timeout = None
     else:
-        poll_message = discord.Embed(description=f"**Poll:** ok {author} did you format this correctly?\n{' | '.join(options)}\n")
+        poll_message = discord.Embed(description=f"**Poll:** Hey {author} did you format this correctly?\n{' | '.join(options)}\n")
         return poll_message, "question", "No", "Yes", DEFAULT_TIMEOUT_TIME/2
     
     # Create poll message
