@@ -138,11 +138,11 @@ async def poll(ctx, *options):
             if embed.footer:
                 embed.set_footer(text=f"Voting ended, see results in #{results_channel.name}")
                 await poll_msg.edit(embed=embed)
-        result_text = f"**{question}**\n\n{o1}\nvs\n{o2}\n\n--------------------------"
-        result_text += get_result_text(poll_channel_members_react_dict, o1, o2)
+        
+        result_embed = get_result_text(poll_channel_members_react_dict, ctx.author, question, o1, o2)
 
         # Send the poll results
-        await results_channel.send(result_text)
+        await results_channel.send(embed=result_embed)
     else:
         print(f"server id {server_id}")
         print(f"server settings dict {SERVER_SETTINGS}")

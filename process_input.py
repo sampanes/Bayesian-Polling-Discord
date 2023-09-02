@@ -74,6 +74,7 @@ output
 
 '''
 def poll_input_to_string(options, author):
+    print("len options: ", len(options))
     if len(options) == 3:
         ret_timeout = DEFAULT_TIMEOUT_TIME
     elif len(options) == 4 and is_a_time(options[3]):
@@ -81,7 +82,7 @@ def poll_input_to_string(options, author):
     elif len(options) == 4 and options[3].lower() == "none":
         ret_timeout = None
     else:
-        poll_message = discord.Embed(description=f"**Poll:** did you format this correctly?\n{' | '.join(options)}\n")
+        poll_message = discord.Embed(description=f"**Poll:** ok {author} did you format this correctly?\n{' | '.join(options)}\n")
         return poll_message, "question", "No", "Yes", DEFAULT_TIMEOUT_TIME/2
     
     # Create poll message
