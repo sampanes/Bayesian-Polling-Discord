@@ -1,4 +1,5 @@
 from bot_globals import *
+import discord
 
 def get_result_text(server_members_react_dict, o1, o2):
     # Process the poll results

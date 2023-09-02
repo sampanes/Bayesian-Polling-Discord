@@ -6,3 +6,6 @@ venv/
 
 #pycache wasting my time
 __pycache__/
+
+#server settings is a pickled object that should be unique. this file will be created don't worry
+server_settings.pickle
