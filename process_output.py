@@ -30,7 +30,7 @@ def get_result_text(server_members_react_dict, author, question, o1, o2):
         else_text = ""
         final_p = total_percent/total_voters
     except ZeroDivisionError:
-        else_text = "WTF guys, vote goddamn you, what\'s wrong with you, The death of democracy is not an assassination from ambush. It is a slow extinction from apathy, indifference, and undernourishment. You absolute monsters. Shame on every last one of you""
+        else_text = "WTF guys, vote goddamn you, what\'s wrong with you, The death of democracy is not an assassination from ambush. It is a slow extinction from apathy, indifference, and undernourishment. You absolute monsters. Shame on every last one of you"
         final_p = 50.0
     outcome1 = f"{'{:6.2f}%'.format(100 - final_p)}%"
     outcome2 = f"{'{:6.2f}%'.format(final_p)}%"
