@@ -27,10 +27,8 @@ def get_result_text(server_members_react_dict, author, question, o1, o2):
         result_text+=f"{emoji_key}`{'~{:6.2f}:'.format(percent_value)}"
         result_text+="#"*(int(star_per_count * reaction_counts_dict[emoji_key]))+"`\n"
     try:
-        else_text = ""
         final_p = total_percent/total_voters
     except ZeroDivisionError:
-        else_text = "WTF guys, vote goddamn you, what\'s wrong with you, The death of democracy is not an assassination from ambush. It is a slow extinction from apathy, indifference, and undernourishment. You absolute monsters. Shame on every last one of you"
         final_p = 50.0
     outcome1 = f"{'{:6.2f}%'.format(100 - final_p)}%"
     outcome2 = f"{'{:6.2f}%'.format(final_p)}%"
@@ -44,6 +42,7 @@ def get_result_text(server_members_react_dict, author, question, o1, o2):
     result_embed.add_field(name=f"🌕 {outcome1}", value=o1, inline=True)
     result_embed.add_field(name=f"🌝 {outcome2}", value=o2, inline=True)
     result_embed.add_field(name="Outome", value=result_text, inline=False)
-    result_embed.set_footer(text=f"{'Thanks to everyone who voted!' if total_voters > 1 else else_text}")
+    else_text = f"WTF guys, vote goddamn you, what\'s wrong with you? {'Just one vote?!' if total_voters == 1 else 'NO VOTES?!?'} The death of democracy is not an assassination from ambush. It is a slow extinction from apathy, indifference, and undernourishment. You absolute monsters. Shame on every last one of you"
+    result_embed.set_footer(text=f"{total_voters} {'person' if total_voters == 1 else 'people'} voted. {'Thanks to everyone who voted!' if total_voters > 1 else else_text}")
 
     return result_embed
