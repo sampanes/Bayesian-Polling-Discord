@@ -39,8 +39,10 @@ def get_result_text(server_members_react_dict, author, question, o1, o2):
         color=0x5900ff   
     )
     result_embed.set_author(name=f"{author} asked:")
-    result_embed.add_field(name=f"🌕 {outcome1}", value=o1, inline=True)
-    result_embed.add_field(name=f"🌝 {outcome2}", value=o2, inline=True)
+    result_embed.add_field(name=f"{REACT_EMOJIS[0]} {outcome1}", value=o1, inline=True)
+    if R_E_ODD:
+        result_embed.add_field(name=f"{REACT_EMOJIS[R_E_HALF]} {outcome1}", value="Neutral", inline=True)
+    result_embed.add_field(name=f"{REACT_EMOJIS[-1]} {outcome2}", value=o2, inline=True)
     result_embed.add_field(name="Outome", value=result_text, inline=False)
     else_text = f"WTF guys, vote goddamn you, what\'s wrong with you? {'Just one vote?!' if total_voters == 1 else 'NO VOTES?!?'} The death of democracy is not an assassination from ambush. It is a slow extinction from apathy, indifference, and undernourishment. You absolute monsters. Shame on every last one of you"
     result_embed.set_footer(text=f"{total_voters} {'person' if total_voters == 1 else 'people'} voted. {'Thanks to everyone who voted!' if total_voters > 1 else else_text}")

@@ -1,4 +1,5 @@
 REACT_EMOJIS = ["🌕", "🌖", "🌗", "🌘", "🌑", "🌒", "🌓", "🌔", "🌝"]
+R_E_HALF, R_E_ODD = divmod(len(REACT_EMOJIS),2)
 MAX_STARS = 15
 SECONDS = 1                     # unit of timeout_time
 MINUTES = 60 * SECONDS          #       60
