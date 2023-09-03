@@ -14,7 +14,6 @@ If you are trying to run this bot on your own you need to just pip install the r
 
 ```
 pip install -r requirements.txt
-
 ```
 
 Then run the program
