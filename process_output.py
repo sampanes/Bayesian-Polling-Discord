@@ -30,8 +30,8 @@ def get_result_text(server_members_react_dict, author, question, o1, o2):
         final_p = total_percent/total_voters
     except ZeroDivisionError:
         final_p = 50.0
-    outcome1 = f"{'{:6.2f}%'.format(100 - final_p)}%"
-    outcome2 = f"{'{:6.2f}%'.format(final_p)}%"
+    outcome1 = f"{'{:6.2f}%'.format(100 - final_p)}"
+    outcome2 = f"{'{:6.2f}%'.format(final_p)}"
 
     result_embed = discord.Embed(
         title="Bayesian Poll Results",
@@ -41,7 +41,7 @@ def get_result_text(server_members_react_dict, author, question, o1, o2):
     result_embed.set_author(name=f"{author} asked:")
     result_embed.add_field(name=f"{REACT_EMOJIS[0]} {outcome1}", value=o1, inline=True)
     if R_E_ODD:
-        result_embed.add_field(name=f"{REACT_EMOJIS[R_E_HALF]} {outcome1}", value="Neutral", inline=True)
+        result_embed.add_field(name=f"{REACT_EMOJIS[R_E_HALF]}       ", value="Neutral", inline=True)
     result_embed.add_field(name=f"{REACT_EMOJIS[-1]} {outcome2}", value=o2, inline=True)
     result_embed.add_field(name="Outome", value=result_text, inline=False)
     else_text = f"WTF guys, vote goddamn you, what\'s wrong with you? {'Just one vote?!' if total_voters == 1 else 'NO VOTES?!?'} The death of democracy is not an assassination from ambush. It is a slow extinction from apathy, indifference, and undernourishment. You absolute monsters. Shame on every last one of you"

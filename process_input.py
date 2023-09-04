@@ -140,14 +140,18 @@ def poll_input_to_string(options, author):
     # Create poll message
     poll_message = discord.Embed(
         title="Bayesian Poll",
-        description=options[0],
+        description=f"{options[0]}\n",
         color=0x00FFFF
     )
-    poll_message.add_field(name="🌕", value=options[1], inline=True)
-    poll_message.add_field(name="🌝", value=options[2], inline=True)
+    how_to_vote = f"React to this post with your answer\nVoting is anonymous (your vote will disappear after it is recorded)\nAs long as the poll is open you can change your vote"
+    poll_message.add_field(name="How to vote", value=how_to_vote, inline=False)
+    poll_message.add_field(name=REACT_EMOJIS[0], value=options[1], inline=True)
+    if R_E_ODD:
+        poll_message.add_field(name=REACT_EMOJIS[R_E_HALF], value="Neutral", inline=True)
+    poll_message.add_field(name=REACT_EMOJIS[-1], value=options[2], inline=True)
     
     poll_message.set_author(name=f"{author} asks...")
-    poll_message.set_footer(text=f"Vote now! This poll is open for {format_timeout(ret_timeout)}")
+    poll_message.set_footer(text=f"Vote now! This poll is open for {format_timeout(ret_timeout)} or until everyone has voted, which never happens :(")
 
     print("returning a timeout of: ",ret_timeout," which is in seconds")
     return poll_message, options[0], options[1], options[2], ret_timeout

@@ -68,6 +68,19 @@ async def poll(ctx, *options):
     SERVER_SETTINGS = get_server_settings_pkl()
     server_id = ctx.guild.id
 
+    if not options:
+        error_msg = discord.Embed(title="Bayesian Polling Bot Help", description=f"Hey there! This is a bot by John and here are a few things I can do for you:", color=0x3498db)
+        for command, description in COMMANDS_AND_DESCRIPTIONS:
+            if command == "!poll":
+                error_msg.add_field(name=f"**{command}**", value=f"{description}\n", inline=False)
+                break
+        else:
+            error_msg.add_field(f"somehow `!poll` is not in the help list at all :(")
+        error_msg.set_author(name=f"Hey {ctx.author}", icon_url=bot.user.avatar.url)
+        error_msg.set_footer(text="Feel free to ping John for help anytime!")
+        await ctx.send(embed=error_msg)
+        return
+
     # check if post poll and post result channels are configured
     if server_id in SERVER_SETTINGS \
         and 'post_poll_channel' in SERVER_SETTINGS[server_id] \
