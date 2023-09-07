@@ -143,7 +143,7 @@ def poll_input_to_string(options, author):
         description=f"{options[0]}\n",
         color=0x00FFFF
     )
-    how_to_vote = f"React to this post with your answer\nVoting is anonymous (your vote will disappear after it is recorded)\nAs long as the poll is open you can change your vote"
+    how_to_vote = f"*React to this post with your answer\nVoting is anonymous (your vote will disappear after it is recorded, if it doesn't, click any lingering reactions to clear them and then vote again, a little slower)\nAs long as the poll is open you can change your vote*"
     poll_message.add_field(name="How to vote", value=how_to_vote, inline=False)
     poll_message.add_field(name=REACT_EMOJIS[0], value=options[1], inline=True)
     if R_E_ODD:

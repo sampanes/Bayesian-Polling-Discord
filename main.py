@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import logging
 import asyncio
+import time
 from bot_globals import *
 from bot_token import BAYESIAN_BOT_TOKEN
 from command_constants import COMMANDS_AND_DESCRIPTIONS
@@ -121,20 +122,35 @@ async def poll(ctx, *options):
 
         # THE MEAT OF THE OPERATION
         poll_channel_members_react_dict = {}
-        try:
-            # Wait for reactions from users
-            while poll_channel_members:
-                reaction, user = await bot.wait_for('reaction_add', timeout=timeout_time, check=check)
+        # Wait for reactions from users
+        brief_timeout = min(MAX_TIME_WAIT, timeout_time)
+        break_now = False
+        start_time = time.time()
+        real_timeout_time = timeout_time
+        while poll_channel_members:
+            try:
+                # print(f"brief_timeout {brief_timeout}\t timeout_time {timeout_time}")
+                reaction, user = await bot.wait_for('reaction_add', timeout=brief_timeout, check=check)
                 await reaction.remove(user)  # Remove user's reaction
-
+                brief_timeout = min(MAX_TIME_WAIT, (real_timeout_time - (time.time() - start_time)))
                 # Check if the user is a member of the server
                 if user in poll_channel_members:
                     poll_channel_members.remove(user)
                 poll_channel_members_react_dict[user] = reaction
 
-        except asyncio.TimeoutError:
-            #await poll_channel.send(f"`{o1}`\nor\n`{o2}`?\nVoting Closed, check {results_channel.mention} for results")
-            pass #TODO what to do after timeout
+            except asyncio.TimeoutError:
+                if break_now:
+                    break
+                timeout_time = real_timeout_time - (time.time() - start_time)
+                if timeout_time > MAX_TIME_WAIT:
+                    timeout_time -= MAX_TIME_WAIT
+                    brief_timeout = MAX_TIME_WAIT
+                else:
+                    break_now = True
+                    brief_timeout = timeout_time
+                #await poll_channel.send(f"`{o1}`\nor\n`{o2}`?\nVoting Closed, check {results_channel.mention} for results")
+        end_time = time.time()
+        print(f"end - start time: {end_time - start_time} ... {float(end_time - start_time) / 60.0} minutes")
 
         # edit poll message footer to display that the voting has ended
         if poll_msg.embeds:
